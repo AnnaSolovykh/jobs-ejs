@@ -9,7 +9,9 @@ const {
     logoff,
 } = require("../controllers/sessionController");
 
-router.route("/register").get(registerShow).post(registerDo);
+router.route("/register")
+    .get(registerShow)
+    .post(registerDo);
 router
     .route("/logon")
     .get(logonShow)
