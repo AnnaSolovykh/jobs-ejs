@@ -1,0 +1,30 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+<h2>Edit Meal</h2>
+
+<form method="POST" action="/meals/update/<%= meal.id %>">
+    <div>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" value="<%= meal ? meal.title : '' %>"/>
+    </div>
+    <div>
+        <label for="type">Type:</label>
+        <select id="type" name="type">
+            <option value="breakfast" <%= meal && meal.type === 'breakfast' ? 'selected' : '' %>>breakfast</option>
+            <option value="snack" <%= meal && meal.type === 'snack' ? 'selected' : '' %>>snack</option>
+            <option value="lunch" <%= meal && meal.type === 'lunch' ? 'selected' : '' %>>lunch</option>
+            <option value="dinner" <%= meal && meal.type === 'dinner' ? 'selected' : '' %>>dinner</option>
+        </select>
+    </div>
+    <div>
+        <label for="isFavorite">Favorite:</label>
+        <input type="checkbox" id="isFavorite" name="isFavorite" <%= meal && meal.isFavorite ? 'checked' : '' %>>
+    </div>
+    <button type="submit">edit</button>
+    <a href="/meals">
+        <button type="button">cancel</button>
+    </a>
+    <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+</form>
+
+<%- include("partials/footer.ejs") %>
