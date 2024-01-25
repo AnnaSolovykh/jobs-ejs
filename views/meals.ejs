@@ -1,0 +1,37 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+<h2>Meals List</h2>
+<a href="/meals/new">
+    <button type="button">Add a meal</button>
+</a>
+<table id="meals-table">
+    <tr id="meals-table-header">
+        <th>Title</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th colspan="2"></th>
+    </tr>
+    <% if (meals && meals.length) { %>
+        <% meals.forEach((meal) => { %>
+        <tr>
+            <td><%= meal.title %></td>
+            <td><%= meal.type %></td>
+            <td>
+                <input type="checkbox" disabled <%= meal.isFavorite ? 'checked' : '' %>>
+            </td>
+            <td>
+                <a href="/meals/edit/<%= meal.id %>">
+                    <button type="button">edit</button>
+                </a>
+            </td>
+            <td>
+                <form action="/meals/delete/<%= meal.id %>" method="POST">
+                    <button type="submit">delete</button>
+                    <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    <% } %>
+</table>
+<%- include("partials/footer.ejs") %>
