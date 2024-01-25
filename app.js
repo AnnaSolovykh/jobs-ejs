@@ -1,18 +1,25 @@
 const express = require("express");
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const cookieParser = require("cookie-parser");
+const csrf = require("host-csrf");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+const passport = require("passport");
+const passportInit = require("./passport/passportInit");
 require("express-async-errors");
+require("dotenv").config();
 
 const app = express();
 
 app.set("view engine", "ejs");
 
 //Security Packages
-const helmet = require('helmet');
 app.use(helmet());
 
-const xss = require('xss-clean');
 app.use(xss());
 
-const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
     max: 100, 
@@ -23,14 +30,10 @@ app.use(limiter);
 // Body parser
 app.use(express.urlencoded({ extended: true }));
 
-require("dotenv").config();
-
 // Cookie Parser
-const cookieParser = require("cookie-parser");
 app.use(cookieParser(process.env.SESSION_SECRET));
 
 // CSRF Protection
-const csrf = require("host-csrf");
 let csrf_development_mode = true;
 if (app.get("env") === "production") {
     csrf_development_mode = false;
@@ -44,8 +47,6 @@ const csrf_options = {
 app.use(csrf(csrf_options));
 
 // Session configuration
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
 const url = process.env.MONGO_URI;
 
 const store = new MongoDBStore({
@@ -72,9 +73,6 @@ if (app.get("env") === "production") {
 app.use(session(sessionParms));
 
 // Passport initialization
-const passport = require("passport");
-const passportInit = require("./passport/passportInit");
-
 passportInit();
 app.use(passport.initialize());
 app.use(passport.session());
