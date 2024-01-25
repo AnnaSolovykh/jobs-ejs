@@ -1,5 +1,5 @@
 const Meal = require("../models/meal");
-const parseValidationErrors = require("../utils/parseValidationErrs");
+const handleErrors = require("../utils/parseErrors");
 
 // GET all meals for the current user
 const getMeals = async (req, res, next) => {
@@ -7,13 +7,7 @@ const getMeals = async (req, res, next) => {
         const meals = await Meal.find({ createdBy: req.user._id });
         res.render('meals', { meals });
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            const errors = parseValidationErrors(error);
-            req.flash('error', errors);
-        } else {
-            res.status(500);
-            req.flash('error', 'An internal server error occurred.');
-        }
+        handleErrors(error, req, res);
     }
 };
 
@@ -25,14 +19,7 @@ const addMeal = async (req, res, next) => {
         const newMeal = await Meal.create({ ...req.body, createdBy: req.user._id });
         res.redirect('/meals'); 
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            const errors = parseValidationErrors(error);
-            req.flash('error', errors);
-        } else {
-            res.status(500);
-            req.flash('error', 'An internal server error occurred.');
-            res.redirect('/meals');
-        }
+        handleErrors(error, req, res);
     }
 };
 
@@ -41,15 +28,7 @@ const getNewMealForm = async (req, res) => {
     try {
         res.render('newMealForm', {}); 
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            const errors = parseValidationErrors(error);
-            req.flash('error', errors);
-            res.redirect('/meals');
-        } else {
-            res.status(500);
-            req.flash('error', 'An internal server error occurred.');
-            res.redirect('/meals');
-        }
+        handleErrors(error, req, res);
     }
 };
 
@@ -65,15 +44,7 @@ const editMeal = async (req, res, next) => {
         }
         res.render('meal', { meal }); 
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            const errors = parseValidationErrors(error);
-            req.flash('error', errors);
-            res.redirect('/meals');
-        } else {
-            res.status(500);
-            req.flash('error', 'An internal server error occurred.');
-            res.redirect('/meals');
-        }
+        handleErrors(error, req, res); 
     }
 };
 
@@ -94,14 +65,7 @@ const updateMeal = async (req, res, next) => {
         }
         res.redirect('/meals');
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            const errors = parseValidationErrors(error);
-            req.flash('error', errors);
-            res.redirect('/meals/edit/' + req.params.id);
-        } else {
-            res.status(500);
-            req.flash('error', 'An internal server error occurred.');
-        }
+        handleErrors(error, req, res, '/meals/edit/' + req.params.id);
     }
 };
 
@@ -117,15 +81,7 @@ const deleteMeal = async (req, res, next) => {
         req.flash('success', 'Meal was deleted');
         res.redirect('/meals');
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            const errors = parseValidationErrors(error);
-            req.flash('error', errors);
-            res.redirect('/meals/edit/' + req.params.id);
-        } else {
-            res.status(500);
-            req.flash('error', 'An internal server error occurred.');
-            return res.redirect('/meals');
-        }
+        handleErrors(error, req, res); 
     }
 };
 
