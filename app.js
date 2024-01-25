@@ -5,6 +5,21 @@ const app = express();
 
 app.set("view engine", "ejs");
 
+//Security Packages
+const helmet = require('helmet');
+app.use(helmet());
+
+const xss = require('xss-clean');
+app.use(xss());
+
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 100, 
+});
+
+app.use(limiter);
+
 // Body parser
 app.use(express.urlencoded({ extended: true }));
 
@@ -74,7 +89,7 @@ app.get("/", (req, res) => {
 });
 app.use("/sessions", require("./routes/sessionRoutes"));
 
-// secret word handling
+//Secret word handling
 const secretWordRouter = require("./routes/secretWord");
 const auth = require("./middleware/auth");
 app.use("/secretWord", auth, secretWordRouter);
