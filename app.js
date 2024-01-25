@@ -79,6 +79,9 @@ const secretWordRouter = require("./routes/secretWord");
 const auth = require("./middleware/auth");
 app.use("/secretWord", auth, secretWordRouter);
 
+//Meals routes handling
+const mealsRouter = require("./routes/meals");
+app.use("/", auth, mealsRouter);
 
 // Error handling
 app.use((req, res) => {
